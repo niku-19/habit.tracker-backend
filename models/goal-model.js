@@ -4,19 +4,26 @@ const goalSchema = new mongoose.Schema(
   {
     goalName: {
       type: String,
-      require: true,
+      required: true,
     },
-    goalDesc: {
+    description: {
       type: String,
-      require: true,
+      required: true,
     },
-    targetData: {
-      type: String,
-      require: true,
+    targetDate: {
+      type: Date,
+      required: true,
     },
-    targetCaloriesValue: {
+    targetCalories: {
       type: Number,
-      require: true,
+      default: 0,
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+      default: "In Progress",
+      enum: ["In Progress", "Achieved", "Abandoned"],
     },
   },
   {
@@ -24,4 +31,4 @@ const goalSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("goal", goalSchema);
+export default mongoose.model("goals", goalSchema);

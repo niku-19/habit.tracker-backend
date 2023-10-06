@@ -1,14 +1,14 @@
 import express from "express";
 import {
-  addExercise,
-  deleteExercise,
-  getAllExercise,
+  createNewExercise,
+  deleteExerciesById,
+  getAllExercises,
 } from "../controllers/exercises-controllers.js";
 
 const Router = express.Router();
 
-Router.get("/exercises/exercises", getAllExercise);
-Router.post("/exercises/add-exercise", addExercise);
-Router.delete("/exercises/:exerciseId", deleteExercise);
+Router.get("/exercises/exercises", getAllExercises);
+Router.post("/exercises/add-exercise", createNewExercise);
+Router.delete("/exercises/:exerciseId", deleteExerciesById);
 
 export default Router;

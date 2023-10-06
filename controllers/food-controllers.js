@@ -32,6 +32,7 @@ export const getAllFoods = async (req, res) => {
 
 export const addFood = async (req, res) => {
   const { foodName, calories, protien, fat, carbohydrate } = req.body;
+  console.log(carbohydrate);
   try {
     if (!foodName || !calories || !protien || !fat || !carbohydrate) {
       return res.status(400).json({
@@ -39,13 +40,15 @@ export const addFood = async (req, res) => {
         success: false,
       });
     }
+
     const newFood = new foodModel({
       foodName: foodName,
       calories: parseInt(calories),
       protein: parseInt(protien),
       fat: parseInt(fat),
-      carbohydrate: parseInt(carbohydrate),
+      carbohydrate: +carbohydrate,
     });
+
     const savedData = await newFood.save();
     if (!savedData) {
       return res.status(403).json({
