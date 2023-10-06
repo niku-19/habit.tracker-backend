@@ -2,29 +2,20 @@ import mongoose from "mongoose";
 
 const exerciseSchema = new mongoose.Schema(
   {
-    exerciseName: {
+    name: {
       type: String,
-      require: true,
+      required: [true, "Name is required"],
     },
-    exerciseDuration: {
+    duration: {
       type: Number,
-      require: true,
     },
-    caloriesBurnRate: {
+    caloriesBurned: {
       type: Number,
-      require: true,
     },
   },
   {
     timestamps: true,
-    toJSON: {
-      virtuals: true,
-    },
   }
 );
 
-exerciseSchema.virtual("calories").get(function () {
-  return this.exerciseDuration * this.caloriesBurnRate;
-});
-
-export default mongoose.model("exercise", exerciseSchema);
+export default mongoose.model("exercises", exerciseSchema);

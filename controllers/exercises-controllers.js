@@ -1,126 +1,76 @@
-import exercisesSchema from "../models/exercise-model.js";
+import { ErrorMessage, SuccessMessage } from "../const/messageConts.js";
+import exerciseModel from "../models/exercise-model.js";
 
-export const createNewExercise = async (req, res) => {
+// @desc add new exercise
+// route POST /v1/api/fitraho/exercises/add-exercise
+
+export const addExercise = async (req, res) => {
+  const { name, duration, calories } = req.body;
+
   try {
-    const { exerciseName, exerciseDuration, caloriesBurnRate } = req.body;
-
-    if (!exerciseName || !exerciseDuration || !caloriesBurnRate) {
+    if (!name || !duration || !calories) {
       return res.status(400).json({
-        statusCode: 400,
-        message: `Bad request Required Feild Missing`,
-        success: false,
-        data: null,
+        message: ErrorMessage.MISING_FIELD,
       });
     }
-
-    const found = await exercisesSchema.findOne({ exerciseName: exerciseName });
-
-    if (found) {
-      return res.status(403).json({
-        statusCode: 403,
-        message: `Exercises already added! please try with different payload`,
-        success: false,
-        data: null,
-      });
-    }
-
-    const newExercise = new exercisesSchema({
-      exerciseName,
-      exerciseDuration,
-      caloriesBurnRate,
+    const newExercise = new exerciseModel({
+      name: name,
+      duration: duration,
+      caloriesBurned: calories,
     });
-
-    const result = await newExercise.save();
-
-    if (!result || result.length < 1) {
-      return res.status(202).json({
-        statusCode: 202,
-        message: `Exercise not added!`,
-        success: false,
-        data: null,
-      });
-    }
-
-    return res.status(201).json({
-      statusCode: 201,
-      message: `Exercise added Successfully`,
-      success: false,
-      data: result,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      statusCode: 500,
-      message: `Error occured : ${err.message}`,
-      success: false,
-      data: null,
-    });
-  }
-};
-
-export const getAllExercises = async (req, res) => {
-  try {
-    const exercises = await exercisesSchema.find();
-
-    if (!exercises || exercises.length < 1) {
-      return res.status(404).json({
-        statusCode: 404,
-        message: `exercises not found`,
-        success: false,
-        data: null,
-      });
-    }
+    await newExercise.save();
 
     return res.status(200).json({
-      statusCode: 200,
-      message: `exercises found`,
-      success: false,
-      data: exercises,
+      message: SuccessMessage.HABIT_ADDED,
+      success: true,
+      data: newExercise,
     });
-  } catch (err) {
+  } catch (error) {
     return res.status(500).json({
-      statusCode: err.status,
-      message: `error occured : ${err.message}`,
-      success: false,
-      data: null,
+      message: error.message,
     });
   }
 };
-export const deleteExerciesById = async (req, res) => {
-  try {
-    const { exerciseId } = req.params;
 
+// @desc retrive all exercises
+// route GET /v1/api/fitraho/exercises
+
+export const getAllExercise = async (req, res) => {
+  try {
+    const foundExecises = await exerciseModel.find();
+
+    return res.status(200).json({
+      message: SuccessMessage.HABIT_LOAD,
+      success: true,
+      data: foundExecises,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+//@desc exercise by its ID
+//route /v1/api/fitraho/exercise/:exerciseId
+
+export const deleteExercise = async (req, res) => {
+  const { exerciseId } = req.params;
+
+  try {
     if (!exerciseId) {
       return res.status(400).json({
-        statusCode: 400,
-        message: `Bad request missing exercise id as params`,
-        success: false,
-        data: null,
+        message: ErrorMessage.MISING_FIELD,
       });
     }
-
-    const exercises = await exercisesSchema.findOne({ _id: exerciseId });
-
-    if (!exercises || exercises.length < 1) {
-      return res.status(404).json({
-        statusCode: 404,
-        message: `exercises not found`,
-        success: false,
-        data: null,
-      });
-    }
-
-    return res.status(200).json({
-      statusCode: 200,
-      message: `exercises deleted successfully`,
-      success: false,
-      data: exercises,
+    await exerciseModel.findByIdAndDelete({ _id: exerciseId });
+    return res.status(204).json({
+      message: SuccessMessage.HABIT_REMOVE,
+      success: true,
     });
-  } catch (err) {
+  } catch (error) {
     return res.status(500).json({
-      statusCode: err.status,
-      message: `error occured : ${err.message}`,
-      success: false,
-      data: null,
+      message: error.message,
     });
   }
 };
