@@ -6,7 +6,7 @@ export const getAllFoods = async (req, res) => {
   try {
     const foundFood = await foodModel.find().select("-__v");
 
-    if (foundFood) {
+    if (!foundFood) {
       return res.status(404).json({
         statusCode: 404,
         message: `Food not found`,
